@@ -204,6 +204,17 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" STREQ
   endif()
 endif()
 
+if(ENABLE_DISCORD)
+	if (TARGET discord-rpc)
+		target_include_directories(warzone2100 PRIVATE "${CMAKE_SOURCE_DIR}/3rdparty/discord-rpc/include")
+		target_link_libraries(warzone2100 discord-rpc)
+		target_sources(warzone2100 PRIVATE "integrations/wzdiscordrpc.h" "integrations/wzdiscordrpc.cpp")
+		target_compile_definitions(warzone2100 PRIVATE "ENABLE_DISCORD")
+	else()
+		message(WARNING "Missing target: discord-rpc")
+	endif()
+endif()
+
 ############################
 # Main App install location
 
