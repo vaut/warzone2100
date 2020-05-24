@@ -549,6 +549,7 @@ public:
 		currentRichPresenceData.clear();
 
 		currentRichPresenceData.state = _("In Multiplayer Lobby");
+		currentRichPresenceData.startTimestamp = currentDiscordTimestamp();
 
 		setBaseMultiplayerGameInfo(info);
 		updateDiscordPresence();
@@ -568,7 +569,14 @@ public:
 		cancelOrDismissJoinNotifications();
 		lastDismissedJoinRequestByUserId.clear();
 
+		currentRichPresenceData.endTimestamp = 0;
+		currentRichPresenceData.matchSecret.clear();
+		currentRichPresenceData.joinSecret.clear();
+		currentRichPresenceData.spectateSecret.clear();
+
 		currentRichPresenceData.state = _("In Multiplayer Game");
+		currentRichPresenceData.startTimestamp = currentDiscordTimestamp();
+
 		setBaseMultiplayerGameInfo(info);
 		updateDiscordPresence();
 	}
@@ -716,9 +724,10 @@ void DiscordRPCActivitySink::hostingMultiplayerGame(const MultiplayerGameInfo& i
 {
 	lastDismissedJoinRequestByUserId.clear();
 	currentRichPresenceData.clear();
-	setJoinInformation(info); // may set values asynchronously, if needed
 
 	currentRichPresenceData.state = _("In Multiplayer Lobby");
+	currentRichPresenceData.startTimestamp = currentDiscordTimestamp();
+	setJoinInformation(info); // may set values asynchronously, if needed
 
 	setBaseMultiplayerGameInfo(info);
 	updateDiscordPresence();
@@ -739,8 +748,6 @@ void DiscordRPCActivitySink::setBaseMultiplayerGameInfo(const MultiplayerGameInf
 	std::string details = truncateStringIfExceedsLength(std::string(_("Map:")) + " " + info.game.map, MAX_DISCORD_STR_LEN - botsCountStr.size());
 	details += botsCountStr;
 	currentRichPresenceData.details = details;
-	currentRichPresenceData.startTimestamp = currentDiscordTimestamp();
-	currentRichPresenceData.endTimestamp = 0;
 	if (!info.privateGame)
 	{
 		currentRichPresenceData.largeImageKey = "wz_icon";
