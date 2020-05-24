@@ -50,6 +50,7 @@ static std::unordered_map<std::string, std::chrono::system_clock::time_point> la
 #define WZ_DISCORD_JOIN_SPAM_INTERVAL_SECS 60
 
 #define JOIN_NOTIFICATION_TAG_PREFIX "joinNotify::"
+#define JOIN_FIND_AND_CONNECT_TAG  std::string(JOIN_NOTIFICATION_TAG_PREFIX "findandconnect")
 
 static std::string b64Tob64UrlSafe(const std::string& inputb64)
 {
@@ -199,6 +200,7 @@ static void joinGameImpl(const std::vector<JoinConnectionDescription>& joinConne
 	if (currentGameMode != ActivitySink::GameMode::MENUS)
 	{
 		// Can't join a game while already in a game
+		cancelOrDismissNotificationsWithTag(JOIN_FIND_AND_CONNECT_TAG);
 		debug(LOG_ERROR, "Can't join a game while already in a game / lobby.");
 		return;
 	}
@@ -207,27 +209,52 @@ static void joinGameImpl(const std::vector<JoinConnectionDescription>& joinConne
 	NETinit(true);
 	// Ensure the joinGame has a place to return to
 	changeTitleMode(TITLE);
-	joinGame(joinConnectionDetails);
+	JoinGameResult result = joinGame(joinConnectionDetails);
+	if (result != JoinGameResult::JOINED)
+	{
+		cancelOrDismissNotificationsWithTag(JOIN_FIND_AND_CONNECT_TAG);
+	}
 }
 
 static void findAndJoinLobbyGameImpl(const std::string& lobbyAddress, unsigned int lobbyPort, uint32_t lobbyGameId)
 {
-	// look up game by lobby id, find host
-	auto joinConnectionDetails = findLobbyGame(lobbyAddress, lobbyPort, lobbyGameId);
+	WZ_Notification notification;
+	notification.duration = 60 * GAME_TICKS_PER_SEC;
+	notification.contentTitle = _("Discord: Finding & Connecting to Game");
+	std::string contentStr = _("Attempting to find & connect to the game specified by the Discord invite.");
+	contentStr += "\n\n";
+	contentStr += _("This may take a moment...");
+	notification.contentText = contentStr;
+	notification.onDisplay = [lobbyAddress, lobbyPort, lobbyGameId](const WZ_Notification&) {
+		// once the notification is completely displayed, trigger the lookup & join
 
-	if (joinConnectionDetails.empty())
-	{
-		debug(LOG_ERROR, "Join code: Failed to find game in the lobby server: %s:%u", lobbyAddress.c_str(), lobbyPort);
-		std::string contentText = _("Failed to find game in the lobby server: ");
-		contentText += lobbyAddress + ":" + std::to_string(lobbyPort) + "\n\n";
-		contentText += _("The game may have already started, or the host may have disbanded the game lobby.");
-		wzDisplayDialog(Dialog_Error, _("Failed to Find Game"), contentText.c_str());
-		return;
-	}
+		// look up game by lobby id, find host
+		auto joinConnectionDetails = findLobbyGame(lobbyAddress, lobbyPort, lobbyGameId);
 
-	ActivityManager::instance().willAttemptToJoinLobbyGame(lobbyAddress, lobbyPort, lobbyGameId, joinConnectionDetails);
+		if (joinConnectionDetails.empty())
+		{
+			cancelOrDismissNotificationsWithTag(JOIN_FIND_AND_CONNECT_TAG);
+			debug(LOG_ERROR, "Join code: Failed to find game in the lobby server: %s:%u", lobbyAddress.c_str(), lobbyPort);
+			std::string contentText = _("Failed to find game in the lobby server: ");
+			contentText += lobbyAddress + ":" + std::to_string(lobbyPort) + "\n\n";
+			contentText += _("The game may have already started, or the host may have disbanded the game lobby.");
+			WZ_Notification notification;
+			notification.duration = 0;
+			notification.contentTitle = _("Failed to Find Game");
+			notification.contentText = contentText;
+			notification.largeIcon = WZ_Notification_Image("images/notifications/exclamation_triangle.png");
+			notification.tag = std::string(JOIN_NOTIFICATION_TAG_PREFIX "failedtoconnect");
+			addNotification(notification, WZ_Notification_Trigger::Immediate());
+			return;
+		}
 
-	joinGameImpl(joinConnectionDetails);
+		ActivityManager::instance().willAttemptToJoinLobbyGame(lobbyAddress, lobbyPort, lobbyGameId, joinConnectionDetails);
+
+		joinGameImpl(joinConnectionDetails);
+	};
+	notification.largeIcon = WZ_Notification_Image("images/notifications/connect_wait.png");
+	notification.tag = JOIN_FIND_AND_CONNECT_TAG;
+	addNotification(notification, WZ_Notification_Trigger::Immediate());
 }
 
 static bool isTrustedLobbyServer(const std::string& lobbyAddress, unsigned int lobbyPort)
@@ -241,8 +268,15 @@ static void joinGameFromSecret_v1(const std::string joinSecretStr)
 
 	auto displayErrorNotification = [](const std::string& errorMessage){
 		debug(LOG_ERROR, "%s", errorMessage.c_str());
-		std::string contentText = std::string(_("Failed to join the game from the specified invite link, with error:")) + "\n" + errorMessage;
-		wzDisplayDialog(Dialog_Error, _("Failed to Join Game"), contentText.c_str());
+		std::string contentText = _("Failed to join the game from the specified invite link, with error:");
+		contentText += "\n" + errorMessage;
+		WZ_Notification notification;
+		notification.duration = 0;
+		notification.contentTitle = _("Failed to Join Game");
+		notification.contentText = contentText;
+		notification.largeIcon = WZ_Notification_Image("images/notifications/exclamation_triangle.png");
+		notification.tag = std::string(JOIN_NOTIFICATION_TAG_PREFIX "failedtojoin");
+		addNotification(notification, WZ_Notification_Trigger::Immediate());
 		return;
 	};
 
@@ -546,6 +580,7 @@ public:
 	virtual void hostingMultiplayerGame(const MultiplayerGameInfo& info) override;
 	virtual void joinedMultiplayerGame(const MultiplayerGameInfo& info) override
 	{
+		cancelOrDismissNotificationsWithTag(JOIN_FIND_AND_CONNECT_TAG);
 		currentRichPresenceData.clear();
 
 		currentRichPresenceData.state = _("In Multiplayer Lobby");
