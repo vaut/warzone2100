@@ -73,7 +73,7 @@ static void asyncGetDiscordDefaultUserAvatar(const std::string& discord_user_dis
 	try {
 		user_discriminator = std::stoul(discord_user_discriminator);
 	}
-	catch (const std::exception &e) {
+	catch (const std::exception&) {
 		// Failed to convert discriminator to unsigned long
 		callback(nullopt);
 		return;
