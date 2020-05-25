@@ -161,6 +161,7 @@ static int					teamChooserUp = -1;
 static int					aiChooserUp = -1;
 static int					difficultyChooserUp = -1;
 static int					positionChooserUp = -1;
+static int					factionChooserUp = -1;
 static UDWORD hideTime = 0;
 static uint8_t playerVotes[MAX_PLAYERS];
 LOBBY_ERROR_TYPES LobbyError = ERROR_NOERROR;
@@ -210,6 +211,7 @@ static	void	SendFireUp();
 static	void	decideWRF();
 
 static void		closeColourChooser();
+static void		closeFactionChooser();
 static void		closeTeamChooser();
 static void		closePositionChooser();
 static void		closeAiChooser();
@@ -1579,14 +1581,19 @@ static void initChooser(int player)
 	// delete 'colour' button
 	widgDelete(psWScreen, MULTIOP_COLOUR_START + player);
 
+	// delete 'faction' button
+	widgDelete(psWScreen, MULTIOP_FACTION_START + player);
+
 	// remove any choosers already up
 	closeColourChooser();
 	closeTeamChooser();
+	closeFactionChooser();
 }
 
 static void addDifficultyChooser(int player)
 {
 	closeColourChooser();
+	closeFactionChooser();
 	closeTeamChooser();
 	widgDelete(psWScreen, MULTIOP_AI_FORM);
 	widgDelete(psWScreen, MULTIOP_PLAYERS);
@@ -1640,6 +1647,7 @@ static void addDifficultyChooser(int player)
 static void addAiChooser(int player)
 {
 	closeColourChooser();
+	closeFactionChooser();
 	closeTeamChooser();
 	widgDelete(psWScreen, MULTIOP_AI_FORM);
 	widgDelete(psWScreen, MULTIOP_PLAYERS);
@@ -1759,6 +1767,7 @@ static int playerBoxHeight(int player)
 static void addPositionChooser(int player)
 {
 	closeColourChooser();
+	closeFactionChooser();
 	closeTeamChooser();
 	closePositionChooser();
 	closeAiChooser();
@@ -1774,7 +1783,7 @@ static void addColourChooser(UDWORD player)
 
 	// add form.
 	addBlueForm(MULTIOP_PLAYERS, MULTIOP_COLCHOOSER_FORM, "",
-	            8,
+	            7,
 	            playerBoxHeight(player),
 	            MULTIOP_ROW_WIDTH, MULTIOP_PLAYERHEIGHT);
 
@@ -1787,7 +1796,7 @@ static void addColourChooser(UDWORD player)
 	for (unsigned int i = 0; i < MAX_PLAYERS_IN_GUI; i++)
 	{
 		addMultiBut(psWScreen, MULTIOP_COLCHOOSER_FORM, MULTIOP_COLCHOOSER + getPlayerColour(i),
-		            i * (flagW * spaceDiv + space) / spaceDiv + 7,  4, // x, y
+		            i * (flagW * spaceDiv + space) / spaceDiv + 4,  4, // x, y
 		            flagW, flagH,  // w, h
 		            getPlayerColourName(i), IMAGE_PLAYERN, IMAGE_PLAYERN_HI, IMAGE_PLAYERN_HI, getPlayerColour(i));
 
@@ -1804,6 +1813,41 @@ static void closeColourChooser()
 {
 	colourChooserUp = -1;
 	widgDelete(psWScreen, MULTIOP_COLCHOOSER_FORM);
+}
+
+static void addFactionChooser(UDWORD player)
+{
+	ASSERT_OR_RETURN(, player < MAX_PLAYERS, "Invalid player number");
+	initChooser(player);
+
+	// add form.
+	addBlueForm(MULTIOP_PLAYERS, MULTIOP_FACCHOOSER_FORM, "",
+	            7,
+	            playerBoxHeight(player),
+	            MULTIOP_ROW_WIDTH, MULTIOP_PLAYERHEIGHT);
+
+	// add the flags
+	int flagW = iV_GetImageWidth(FrontImages, IMAGE_FACTION_NORMAL) + 4;
+	int flagH = iV_GetImageHeight(FrontImages, IMAGE_PLAYERN);
+	int space = MULTIOP_ROW_WIDTH - 0 - flagW * NUM_FACTIONS;
+	int spaceDiv = NUM_FACTIONS;
+	space = std::min(space, 5 * spaceDiv);
+	for (unsigned int i = 0; i < NUM_FACTIONS; i++)
+	{
+//		int player_faction = NetPlay.players[player].faction;
+		addMultiBut(psWScreen, MULTIOP_FACCHOOSER_FORM, MULTIOP_FACCHOOSER + i,
+		            i * (flagW * spaceDiv + space) / spaceDiv + 7,  4, // x, y
+		            flagW, flagH,  // w, h
+		            nullptr, IMAGE_FACTION_NORMAL+i, IMAGE_PLAYERN_HI, IMAGE_PLAYERN_HI);
+	}
+
+	factionChooserUp = player;
+}
+
+static void closeFactionChooser()
+{
+	factionChooserUp = -1;
+	widgDelete(psWScreen, MULTIOP_FACCHOOSER_FORM);
 }
 
 static void changeTeam(UBYTE player, UBYTE team)
@@ -2343,6 +2387,11 @@ void addPlayerBox(bool players)
 				addColourChooser(i);
 				continue;
 			}
+			else if (i == factionChooserUp)
+			{
+				addFactionChooser(i);
+				continue;
+			}
 			else if (i == teamChooserUp)
 			{
 				addTeamChooser(i);
@@ -2369,7 +2418,7 @@ void addPlayerBox(bool players)
 				sButInit.pDisplay = displayTeamChooser;
 				sButInit.UserData = i;
 
-				if (teamChooserUp == i && colourChooserUp < 0)
+				if (teamChooserUp == i && colourChooserUp < 0 && factionChooserUp < 0)
 				{
 					addTeamChooser(i);
 				}
@@ -3349,7 +3398,7 @@ void WzMultiOptionTitleUI::processMultiopWidgets(UDWORD id)
 		int clickedMenuID = id - MULTIOP_TEAMS_START;
 
 		//make sure team chooser is not up before adding new one for another player
-		if (teamChooserUp < 0 && colourChooserUp < 0 && canChooseTeamFor(clickedMenuID) && positionChooserUp < 0)
+		if (teamChooserUp < 0 && colourChooserUp < 0 && factionChooserUp < 0 && canChooseTeamFor(clickedMenuID) && positionChooserUp < 0)
 		{
 			addTeamChooser(clickedMenuID);
 		}
@@ -3405,7 +3454,7 @@ void WzMultiOptionTitleUI::processMultiopWidgets(UDWORD id)
 
 	if (id >= MULTIOP_COLOUR_START && id <= MULTIOP_COLOUR_END && (id - MULTIOP_COLOUR_START == selectedPlayer || NetPlay.isHost))
 	{
-		if (teamChooserUp < 0 && positionChooserUp < 0 && colourChooserUp < 0)		// not choosing something else already
+		if (teamChooserUp < 0 && positionChooserUp < 0 && colourChooserUp < 0 && factionChooserUp < 0)		// not choosing something else already
 		{
 			addColourChooser(id - MULTIOP_COLOUR_START);
 		}
@@ -3420,7 +3469,7 @@ void WzMultiOptionTitleUI::processMultiopWidgets(UDWORD id)
 	{
 		int player = id - MULTIOP_PLAYER_START;
 		if ((player == selectedPlayer || (NetPlay.players[player].allocated && NetPlay.isHost))
-		    && positionChooserUp < 0 && teamChooserUp < 0 && colourChooserUp < 0)
+		    && positionChooserUp < 0 && teamChooserUp < 0 && colourChooserUp < 0 && factionChooserUp < 0)
 		{
 			addPositionChooser(player);
 		}
@@ -3438,7 +3487,7 @@ void WzMultiOptionTitleUI::processMultiopWidgets(UDWORD id)
 			addPlayerBox(!ingame.bHostSetup || bHosted);
 		}
 		else if (!NetPlay.players[player].allocated && !locked.ai && NetPlay.isHost
-		         && positionChooserUp < 0 && teamChooserUp < 0 && colourChooserUp < 0)
+		         && positionChooserUp < 0 && teamChooserUp < 0 && colourChooserUp < 0 && factionChooserUp < 0)
 		{
 			if (widgGetButtonKey_DEPRECATED(psWScreen) == WKEY_SECONDARY)
 			{
@@ -3466,7 +3515,7 @@ void WzMultiOptionTitleUI::processMultiopWidgets(UDWORD id)
 	}
 
 	if (id >= MULTIOP_DIFFICULTY_INIT_START && id <= MULTIOP_DIFFICULTY_INIT_END
-	    && !locked.difficulty && NetPlay.isHost && positionChooserUp < 0 && teamChooserUp < 0 && colourChooserUp < 0)
+	    && !locked.difficulty && NetPlay.isHost && positionChooserUp < 0 && teamChooserUp < 0 && colourChooserUp < 0 && factionChooserUp < 0)
 	{
 		addDifficultyChooser(id - MULTIOP_DIFFICULTY_INIT_START);
 		addPlayerBox(!ingame.bHostSetup || bHosted);
@@ -3479,6 +3528,29 @@ void WzMultiOptionTitleUI::processMultiopWidgets(UDWORD id)
 		SendColourRequest(colourChooserUp, id - MULTIOP_COLCHOOSER);
 		closeColourChooser();
 		addPlayerBox(!ingame.bHostSetup || bHosted);
+	}
+
+	// clicked on faction chooser button
+	if (id >= MULTIOP_FACTION_START && id <= MULTIOP_FACTION_END && (id - MULTIOP_FACTION_START == selectedPlayer || NetPlay.isHost))
+	{
+		if (teamChooserUp < 0 && positionChooserUp < 0 && colourChooserUp < 0 && factionChooserUp < 0)		// not choosing something else already
+		{
+			addFactionChooser(id - MULTIOP_FACTION_START);
+		}
+	}
+
+	// clicked on faction
+	STATIC_ASSERT(MULTIOP_FACCHOOSER + NUM_FACTIONS - 1 <= MULTIOP_FACCHOOSER_END);
+	if (id >= MULTIOP_FACCHOOSER && id <= MULTIOP_FACCHOOSER + NUM_FACTIONS -1)
+	{
+		int idx = id - MULTIOP_FACCHOOSER;
+		NetPlay.players[factionChooserUp].faction = idx;
+		NETBroadcastPlayerInfo(factionChooserUp);
+		closeFactionChooser();
+		addPlayerBox(!ingame.bHostSetup || bHosted);
+		resetReadyStatus(false);
+
+		debug(LOG_INFO, "click on faction %i", id-MULTIOP_FACCHOOSER);
 	}
 
 	if (id == MULTIOP_TEAMCHOOSER_KICK)
@@ -4077,6 +4149,7 @@ void WzMultiOptionTitleUI::start()
 		difficultyChooserUp = -1;
 		positionChooserUp = -1;
 		colourChooserUp = -1;
+		factionChooserUp = -1;
 		for (i = 0; i < MAX_PLAYERS; i++)
 		{
 			game.skDiff[i] = (DIFF_SLIDER_STOPS / 2);	// reset AI (turn it on again)
