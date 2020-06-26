@@ -421,7 +421,7 @@ function eventGameInit()
 			completeResearchOnTime(Infinity, playnum);
 		}
 	}
-
+	roomPlayability();
 	setTimer("checkPlayerVictoryStatus", 3000);
 	hackNetOn();
 
