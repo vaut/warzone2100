@@ -257,6 +257,8 @@ function hud()
 function autohostWin()
 {
 	gameOverMessage(false);
+	printReportBattle();
+	
 }
 
 // /////////////////////////////////////////////////////////////////
@@ -331,7 +333,6 @@ function checkPlayerVictoryStatus()
 		}
 		if (playerData[selectedPlayer].usertype == USERTYPE.spectator)
 		{
-			printReportBattle();
 //			gameOverMessage(true);
 //			queue("autohostWin", 30*1000);
 			console(_("the battle is over, you can leave the room"));
