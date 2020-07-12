@@ -35,6 +35,7 @@ function smallReportBattle()
 {
 	for (var playnum = 0; playnum < maxPlayers; playnum++)
 	{
+		if (playerData[playnum].usertype == USERTYPE.spectator){continue;}
 		debug("FRAMEUPDATE "+gameTime);
 		debug([
 		"FRAMEUPDATE2",
@@ -89,8 +90,9 @@ function printStartGameSettings()
 			}
 		},
 	};
-	debug(JSON.stringify( [mapName, human.scavengers(), human.alliancesType(), human.powerType(), human.baseType(), "T" + getMultiTechLevel()]));
+	debug(["BATTLEDUMP", scavengers, powerType, baseType, alliancesType].join(" "));
 	console( [mapName, human.scavengers(), human.alliancesType(), human.powerType(), human.baseType() ].join("\n"));
+	
 }
 
 var attacker = [];
