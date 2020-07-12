@@ -3,32 +3,55 @@ function printReportBattle()
 	var colors =  [_("Green"),_("Orange"),_("Grey"),_("Black"),_("Red"),_("Blue"),_("Pink"),_("Cyan"),_("Yellow"),_("Purple"),_("White"),_("Bright blue"),_("Neon green"),_("Infrared"),_("Ultraviolet"),_("Brown")];
 	var teams = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
 	for (var playnum = 0; playnum < maxPlayers; playnum++)
-		{
-			console([
-				playerData[playnum].usertype,
-				colors[playerData[playnum].colour],
-				playerData[playnum].name,
-				_("Team"),
-				teams[playerData[playnum].team],
-				_("Position"),
-				playerData[playnum].position
+	{
+		console([
+			playerData[playnum].usertype,
+			colors[playerData[playnum].colour],
+			playerData[playnum].name,
+			_("Team"),
+			teams[playerData[playnum].team],
+			_("Position"),
+			playerData[playnum].position
+		].join(" "));
+		debug([
+			"USERJSDUMP",
+			playerData[playnum].position,
+			playerData[playnum].usertype,
+			playerData[playnum].droidLost,
+			playerData[playnum].structureLost,
+			playerData[playnum].kills
 			].join(" "));
-			debug([
-				"USERJSDUMP",
-				playerData[playnum].position,
-				playerData[playnum].usertype,
-				playerData[playnum].droidLost,
-				playerData[playnum].structureLost,
-				playerData[playnum].kills
-				].join(" "));
-			debug(JSON.stringify(playerData[playnum]));
-		}
-		if (playerData[selectedPlayer].usertype == USERTYPE.spectator)
-		{
-			console(_("the battle is over, you can leave the room"));
-			debug("the battle is over, you can leave the room");
-		}
+		debug(JSON.stringify(playerData[playnum]));
+	}
+	if (playerData[selectedPlayer].usertype == USERTYPE.spectator)
+	{
+		console(_("the battle is over, you can leave the room"));
+		debug("the battle is over, you can leave the room");
+	}
 }
+
+
+function smallReportBattle()
+{
+	for (var playnum = 0; playnum < maxPlayers; playnum++)
+	{
+		debug("FRAMEUPDATE "+gameTime);
+		debug([
+		"FRAMEUPDATE2",
+		playerData[playnum].position,
+		playerData[playnum].kills,
+		playerData[playnum].droidLost,
+		playerData[playnum].structureLost,
+		playerData[playnum].colour,
+		countDroid(DROID_ANY, playnum),
+		playerData[playnum].name
+		].join(" "));
+	}
+
+
+}
+
+
 
 namespace("rp_");
 function printStartGameSettings()
@@ -71,6 +94,7 @@ function printStartGameSettings()
 }
 
 var attacker = [];
+
 function rp_eventGameInit()
 {
 	printStartGameSettings();
@@ -81,6 +105,8 @@ function rp_eventGameInit()
 		attacker[playnum]=[];
 		attacker[playnum].droid=[];
 	}
+	setTimer("smallReportBattle", 10*1000)
+
 }
 
 function rp_eventDestroyed(victim)

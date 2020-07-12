@@ -256,9 +256,14 @@ function hud()
 
 function autohostWin()
 {
-	gameOverMessage(false);
+	gameOverMessage(true);
+}
+
+function timeOut()
+{
+	debug("TIMEOUT");
 	printReportBattle();
-	
+	gameOverMessage(false);
 }
 
 // /////////////////////////////////////////////////////////////////
@@ -333,10 +338,10 @@ function checkPlayerVictoryStatus()
 		}
 		if (playerData[selectedPlayer].usertype == USERTYPE.spectator)
 		{
-//			gameOverMessage(true);
-//			queue("autohostWin", 30*1000);
-			console(_("the battle is over, you can leave the room"));
-//			debug("the battle is over, you can leave the room");
+			printReportBattle();
+			queue("autohostWin", 300*1000);
+			removeTimer("timeOut");
+			setMissionTime(-1);
 		}
 	}
 }
@@ -362,9 +367,9 @@ function co_eventGameInit()
 	if (roomPlayability())
 	{
 		setTimer("checkPlayerVictoryStatus", 3000);
-//		var gameLimit = 30; //time in min
-//		setMissionTime(gameLimit*60);
-//		queue("autohostWin", gameLimit*60*1000);
+		var gameLimit = 35; 
+		setMissionTime(gameLimit*60);
+		setTimer("timeOut", gameLimit*60*1000);
 		setTimer("activityAlert", 10000);
 	}
 }
