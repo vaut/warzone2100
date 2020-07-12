@@ -339,7 +339,7 @@ function checkPlayerVictoryStatus()
 		if (playerData[selectedPlayer].usertype == USERTYPE.spectator)
 		{
 			printReportBattle();
-			queue("autohostWin", 300*1000);
+			queue("autohostWin", 30*1000);
 			removeTimer("timeOut");
 			setMissionTime(-1);
 		}
