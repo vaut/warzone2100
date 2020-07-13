@@ -27,6 +27,7 @@
 #define _netplay_h
 
 #include "lib/framework/crc.h"
+#include "src/faction.h"
 #include "nettypes.h"
 #include <physfs.h>
 #include <vector>
@@ -247,7 +248,7 @@ struct PLAYER
 	bool		autoGame;		// if we are running a autogame (AI controls us)
 	std::vector<WZFile> wzFiles;    ///< for each player, we keep track of map/mod download progress
 	char		IPtextAddress[40];	///< IP of this player
-	int8_t		faction;		///< which faction the player has
+	FactionID	faction;		///< which faction the player has
 };
 
 // ////////////////////////////////////////////////////////////////////////

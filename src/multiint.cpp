@@ -222,7 +222,7 @@ static bool		safeToUseColour(UDWORD player, UDWORD col);
 bool changeReadyStatus(UBYTE player, bool bReady);
 static void stopJoining(std::shared_ptr<WzTitleUI> parent);
 static int difficultyIcon(int difficulty);
-static int factionIcon(int difficulty);
+static int factionIcon(FactionID faction);
 // ////////////////////////////////////////////////////////////////////////////
 // map previews..
 
@@ -1834,7 +1834,6 @@ static void addFactionChooser(UDWORD player)
 	space = std::min(space, 5 * spaceDiv);
 	for (unsigned int i = 0; i < NUM_FACTIONS; i++)
 	{
-//		int player_faction = NetPlay.players[player].faction;
 		addMultiBut(psWScreen, MULTIOP_FACCHOOSER_FORM, MULTIOP_FACCHOOSER + i,
 		            i * (flagW * spaceDiv + space) / spaceDiv + 7,  4, // x, y
 		            flagW, flagH,  // w, h
@@ -2869,12 +2868,12 @@ static void loadMapSettings2()
 		if (ini.contains("faction"))
 		{
 			WzString value = ini.value("faction", "Normal").toWzString();
-			for (unsigned j = 0; j < NUM_FACTIONS; ++j)
+			for (uint8_t faction = 0; faction < NUM_FACTIONS; ++faction)
 			{
-				if (factions[j].name == value)
+				if (factions[faction].name == value)
 				{
-					debug(LOG_INFO, "faction of player %i is %i", i, j); // TODO: delete before factions PR is merged
-					NetPlay.players[i].faction = j;
+					debug(LOG_INFO, "faction of player %i is %i", i, faction); // TODO: delete before factions PR is merged
+					NetPlay.players[i].faction = (FactionID)faction;
 				}
 			}
 		}
@@ -3543,8 +3542,8 @@ void WzMultiOptionTitleUI::processMultiopWidgets(UDWORD id)
 	STATIC_ASSERT(MULTIOP_FACCHOOSER + NUM_FACTIONS - 1 <= MULTIOP_FACCHOOSER_END);
 	if (id >= MULTIOP_FACCHOOSER && id <= MULTIOP_FACCHOOSER + NUM_FACTIONS -1)
 	{
-		int idx = id - MULTIOP_FACCHOOSER;
-		NetPlay.players[factionChooserUp].faction = idx;
+		uint8_t idx = id - MULTIOP_FACCHOOSER;
+		NetPlay.players[factionChooserUp].faction = (FactionID)idx;
 		NETBroadcastPlayerInfo(factionChooserUp);
 		closeFactionChooser();
 		addPlayerBox(!ingame.bHostSetup || bHosted);
@@ -4348,7 +4347,7 @@ static int difficultyIcon(int difficulty)
 	}
 }
 
-static int factionIcon(int faction)
+static int factionIcon(FactionID faction)
 {
 	switch (faction)
 	{
@@ -4605,7 +4604,7 @@ void displayFaction(WIDGET *psWidget, UDWORD xOffset, UDWORD yOffset)
 	drawBlueBox(x, y, psWidget->width(), psWidget->height());
 	if (NetPlay.players[j].wzFiles.empty() && game.skDiff[j])
 	{
-		int faction = NetPlay.players[j].faction;
+		FactionID faction = NetPlay.players[j].faction;
 		iV_DrawImage(FrontImages, factionIcon(faction), x + 5, y + 8);
 	}
 }
