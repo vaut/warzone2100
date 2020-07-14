@@ -2873,7 +2873,6 @@ static void loadMapSettings2()
 				const FACTION* faction = getFactionByID((FactionID) f_id);
 				if (faction->name == value)
 				{
-					debug(LOG_INFO, "faction of player %i is %i", i, f_id); // TODO: delete before factions PR is merged
 					NetPlay.players[i].faction = (FactionID)f_id;
 				}
 			}
