@@ -204,7 +204,7 @@ function roomPlayability()
 	{
 //		debug(_("There are no opponents in the game."));
 		console(_("There are no opponents in the game"));
-//		gameOverMessage(false);
+		gameOverMessage(false);
 		return false;
 	}
 	else {return true;}
