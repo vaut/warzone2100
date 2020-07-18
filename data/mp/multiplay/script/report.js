@@ -33,10 +33,10 @@ function printReportBattle()
 
 function smallReportBattle()
 {
+	debug("FRAMEUPDATE "+gameTime);
 	for (var playnum = 0; playnum < maxPlayers; playnum++)
 	{
 		if (playerData[playnum].usertype == USERTYPE.spectator){continue;}
-		debug("FRAMEUPDATE "+gameTime);
 		debug([
 		"FRAMEUPDATE2",
 		playerData[playnum].position,
@@ -48,8 +48,7 @@ function smallReportBattle()
 		playerData[playnum].name
 		].join(" "));
 	}
-
-
+	debug("FRAMEPUSH");
 }
 
 
