@@ -367,7 +367,9 @@ function co_eventGameInit()
 	if (roomPlayability())
 	{
 		setTimer("checkPlayerVictoryStatus", 3000);
-		var gameLimit = 35; 
+		var gameLimit = 35;
+		if (scavengers == true) {gameLimit += 2;}
+		if (baseType == CAMP_CLEAN) {gameLimit += 5;}
 		setMissionTime(gameLimit*60);
 		setTimer("timeOut", gameLimit*60*1000);
 		setTimer("activityAlert", 10000);
