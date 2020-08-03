@@ -23,6 +23,7 @@ function printReportBattle()
 			].join(" "));
 		debug(JSON.stringify(playerData[playnum]));
 	}
+	debug(["GAMETIMEDUMP", gameTime].join(" "));
 	if (playerData[selectedPlayer].usertype == USERTYPE.spectator)
 	{
 		console(_("the battle is over, you can leave the room"));
@@ -33,6 +34,7 @@ function printReportBattle()
 
 function smallReportBattle()
 {
+	if (playerData[selectedPlayer].usertype !== USERTYPE.spectator){return;}
 	debug("FRAMEUPDATE "+gameTime);
 	for (var playnum = 0; playnum < maxPlayers; playnum++)
 	{
@@ -42,6 +44,7 @@ function smallReportBattle()
 		playerData[playnum].position,
 		playerData[playnum].kills,
 		playerData[playnum].droidLost,
+		playerData[playnum].droidLoss,
 		playerData[playnum].structureLost,
 		playerData[playnum].colour,
 		countDroid(DROID_ANY, playnum),
@@ -101,23 +104,34 @@ function rp_eventGameInit()
 	printStartGameSettings();
 	for (var playnum = 0; playnum < maxPlayers; playnum++){
 		playerData[playnum].droidLost=0;
+		playerData[playnum].droidLoss=0;
 		playerData[playnum].structureLost=0;
 		playerData[playnum].kills=0;
 		attacker[playnum]=[];
 		attacker[playnum].droid=[];
 	}
-	setTimer("smallReportBattle", 10*1000)
+	attacker[scavengerPlayer]=[];
+	attacker[scavengerPlayer].droid=[];
+	setTimer("smallReportBattle", 10*1000);
 
 }
 
 function rp_eventDestroyed(victim)
 {
 //	console("dest:"+victim.player);
-	if(victim.type == DROID && attacker[victim.player].droid[victim.id]){
-		playerData[victim.player].droidLost++;
-		playerData[attacker[victim.player].droid[victim.id]].kills++;
+	if (victim.player == scavengerPlayer){return;}
+	if (victim.type == DROID && attacker[victim.player].droid[victim.id]){
+		if (attacker[victim.player].droid[victim.id] == scavengerPlayer)
+		{
+			playerData[victim.player].droidLoss++;
+		}
+		else
+		{
+			playerData[victim.player].droidLost++;
+			playerData[attacker[victim.player].droid[victim.id]].kills++;
+		}
 	}
-	if(victim.type == STRUCTURE){
+	if (victim.type == STRUCTURE){
 		playerData[victim.player].structureLost++;
 	}
 }
@@ -125,7 +139,7 @@ function rp_eventDestroyed(victim)
 function rp_eventAttacked(victimObj, attackerObj)
 {
 //	console("attack:"+attackerObj.player+"->"+victimObj.player);
-	if(victimObj.type == DROID){
+	if (victimObj.type == DROID){
 		{
 			attacker[victimObj.player].droid[victimObj.id] = attackerObj.player;
 		}
