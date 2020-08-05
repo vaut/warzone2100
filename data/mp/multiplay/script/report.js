@@ -29,6 +29,9 @@ function printReportBattle()
 		console(_("the battle is over, you can leave the room"));
 		debug("the battle is over, you can leave the room");
 	}
+	spam();
+	queue("spam", 10*1000);
+
 }
 
 
@@ -54,7 +57,10 @@ function smallReportBattle()
 	debug("FRAMEPUSH");
 }
 
-
+function spam()
+{
+	chat(ALL_PLAYERS, "This is automatic ranking system.\nHost is not a human. Game results with research log and in-game profiles will be published on \nAutorating website: http://bruh.software/wz.\nVisit about page for detailed info about this system.\nFeel free to contact us, every feedback is welcomed.");
+}
 
 namespace("rp_");
 function printStartGameSettings()
@@ -113,6 +119,9 @@ function rp_eventGameInit()
 	attacker[scavengerPlayer]=[];
 	attacker[scavengerPlayer].droid=[];
 	setTimer("smallReportBattle", 10*1000);
+	spam();
+	queue("spam", 30*1000);
+
 
 }
 
