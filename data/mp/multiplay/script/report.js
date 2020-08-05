@@ -47,7 +47,7 @@ function smallReportBattle()
 		playerData[playnum].position,
 		playerData[playnum].kills,
 		playerData[playnum].droidLost,
-		playerData[playnum].droidLoss,
+//		playerData[playnum].droidLoss,
 		playerData[playnum].structureLost,
 		playerData[playnum].colour,
 		countDroid(DROID_ANY, playnum),
