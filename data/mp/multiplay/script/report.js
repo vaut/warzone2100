@@ -59,7 +59,7 @@ function smallReportBattle()
 
 function spam()
 {
-	chat(ALL_PLAYERS, "This is automatic ranking system.\nHost is not a human. Game results with research log and in-game profiles will be published on \nAutorating website: http://bruh.software/wz.\nVisit about page for detailed info about this system.\nFeel free to contact us, every feedback is welcomed.");
+	chat(ALLIES, "This is automatic ranking system.\nHost is not a human. Game results with research log and in-game profiles will be published on \nAutorating website: http://bruh.software/wz.\nVisit about page for detailed info about this system.\nFeel free to contact us, every feedback is welcomed.");
 }
 
 namespace("rp_");
