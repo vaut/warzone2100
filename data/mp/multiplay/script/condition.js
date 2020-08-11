@@ -18,7 +18,10 @@ const USERTYPE = {
 // - completion of the research
 // - construction of base structures (factories, power plants, laboratories, modules and oil rigs)
 // - dealing damage
-const IDLETIME = 5*60*1000; 
+const IDLETIME = 3*60*1000; 
+var gameLimit = 45*60;
+if (scavengers == true) {gameLimit += 2*60;}
+if (baseType == CAMP_CLEAN) {gameLimit += 5*60;}
 
 function inOneTeam(playnum, splaynum)
 {
@@ -367,11 +370,8 @@ function co_eventGameInit()
 	if (roomPlayability())
 	{
 		setTimer("checkPlayerVictoryStatus", 3000);
-		var gameLimit = 35;
-		if (scavengers == true) {gameLimit += 2;}
-		if (baseType == CAMP_CLEAN) {gameLimit += 5;}
-		setMissionTime(gameLimit*60);
-		setTimer("timeOut", gameLimit*60*1000);
+		setMissionTime(gameLimit);
+		setTimer("timeOut", gameLimit*1000);
 		setTimer("activityAlert", 10000);
 	}
 }
@@ -382,15 +382,18 @@ function activityAlert()
 	{
 		console(_("Passive play leads to defeat. Actions are considered: - unit building - completion of the study - construction of base structures (factories, power plants, laboratories, modules and oil rigs) - dealing damage"));
 	//		debug (getMissionTime());
-		if (getMissionTime() > IDLETIME)
+		if (Math.abs(getMissionTime() - ((playerData[selectedPlayer].lastActivity + IDLETIME - gameTime)/1000)) > 1)
 		{
 			setMissionTime((playerData[selectedPlayer].lastActivity + IDLETIME - gameTime)/1000);
 		}
 	}
 	if (playerData[selectedPlayer].lastActivity + IDLETIME/2 > gameTime)
-		{
-			setMissionTime(-1);
+	{
+		if (Math.abs(getMissionTime() - (gameLimit - (gameTime/1000))) > 1)
+		{	
+			setMissionTime(gameLimit - (gameTime/1000));
 		}
+	}
 }
 
 function co_eventDroidBuilt (droid)
