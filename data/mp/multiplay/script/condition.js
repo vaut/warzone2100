@@ -13,6 +13,13 @@ const USERTYPE = {
 	},
 };
 
+// The time that the player's inactivity is allowed. Actions are considered
+// - unit building
+// - completion of the research
+// - construction of base structures (factories, power plants, laboratories, modules and oil rigs)
+// - dealing damage
+const IDLETIME = 5*60*1000; 
+
 function inOneTeam(playnum, splaynum)
 {
 //	FIXME allianceExistsBetween dont correct if leave player in ALLIANCES_UNSHARED, ALLIANCES_TEAMS mode
@@ -136,6 +143,20 @@ function canReachOil(playnum)
 	return false;
 }
 
+function activeGame(playnum)
+{
+	for (var splaynum = 0; splaynum < maxPlayers; splaynum++)
+	{
+		if (inOneTeam(playnum, splaynum) &&
+		playerData[playnum].lastActivity + IDLETIME >= gameTime)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+
 function canPlay(playnum)
 {
 
@@ -143,7 +164,8 @@ function canPlay(playnum)
 //		factory: hasFactory(playnum),
 //		droid: hasDroid(playnum),
 //		onlyConstruct: hasOnlyConstructor(playnum),
-//		oilReach: canReachOil(playnum)
+//		oilReach: canReachOil(playnum),
+//		activeGame: activeGame(playnum)
 //	};
 //	debug(playerData[playnum].name + JSON.stringify(feature));
 
@@ -155,7 +177,10 @@ function canPlay(playnum)
 	{
 		return false;
 	}
-
+	else if (!activeGame(playnum))
+	{
+		return false;
+	}
 	return true;
 }
 
@@ -191,7 +216,7 @@ function toSpectator(playnum, remove)
 	var spotter = {
 		X: mapWidth/2,
 		Y: mapHeight/2,
-		radius: Math.sqrt(mapWidth*mapWidth+mapHeight*mapHeight)/2*128
+		radius: Math.sqrt(mapWidth*mapWidth + mapHeight*mapHeight)/2*128
 	};
 	addSpotter(spotter.X, spotter.Y, playnum, spotter.radius, 0, 0);
 
@@ -312,6 +337,7 @@ function co_eventGameInit()
 {
 	for (var playnum = 0; playnum < maxPlayers; playnum++)
 	{
+		playerData[playnum].lastActivity = gameTime;
 			//we consider observers to players who cannot play from the beginning of the game
 		if (!canPlay(playnum))
 		{
@@ -328,5 +354,53 @@ function co_eventGameInit()
 	if (roomPlayability())
 	{
 		setTimer("checkPlayerVictoryStatus", 3000);
+		setTimer("activityAlert", 10000);
+	}
+}
+
+function activityAlert()
+{
+	if (playerData[selectedPlayer].lastActivity + IDLETIME/2 < gameTime)
+	{
+		console(_("Passive play leads to defeat. Actions are considered: - unit building - completion of the study - construction of base structures (factories, power plants, laboratories, modules and oil rigs) - dealing damage"));
+	//		debug (getMissionTime());
+		if (getMissionTime() > IDLETIME)
+		{
+			setMissionTime((playerData[selectedPlayer].lastActivity + IDLETIME - gameTime)/1000);
+		}
+	}
+	if (playerData[selectedPlayer].lastActivity + IDLETIME/2 > gameTime)
+		{
+			setMissionTime(-1);
+		}
+}
+
+function co_eventDroidBuilt (droid)
+{	
+	if (droid.player != scavengerPlayer)
+	{
+		playerData[droid.player].lastActivity = gameTime;
+	}
+}
+function co_eventStructureBuilt (structure)
+{
+	if (structure.player != scavengerPlayer)
+	{
+		playerData[structure.player].lastActivity = gameTime;
+	}
+}
+
+function co_eventResearched (research, structure, player)
+{
+	if (player != scavengerPlayer)
+	{
+		playerData[player].lastActivity = gameTime;
+	}
+}
+function co_eventAttacked (victim, attacker)
+{
+	if (attacker.player != scavengerPlayer)
+	{
+		playerData[attacker.player].lastActivity = gameTime;
 	}
 }
