@@ -59,7 +59,11 @@ function smallReportBattle()
 
 function spam()
 {
-	chat(ALLIES, "This is automatic ranking system.\nHost is not a human. Game results with research log and in-game profiles will be published on \nAutorating website: http://bruh.software/wz.\nVisit about page for detailed info about this system.\nFeel free to contact us, every feedback is welcomed.");
+	chat(ALLIES, "This is automatic ranking system.");
+	chat(ALLIES, "Host is not a human. Game results with research log and in-game profiles will be published on");
+	chat(ALLIES, "Autorating website: http://bruh.software/wz.");
+	chat(ALLIES, "Visit about page for detailed info about this system.");
+	chat(ALLIES, "Feel free to contact us, every feedback is welcomed.");
 }
 
 namespace("rp_");
