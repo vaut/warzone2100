@@ -10,6 +10,7 @@ receiveAllEvents(true);  // If doing this in eventGameInit, it seems to be too l
 
 include("multiplay/script/camTechEnabler.js");
 include("multiplay/script/weather.js");
+include("multiplay/script/commander.js");
 
 var lastHitTime = 0;
 var cheatmode = false;
