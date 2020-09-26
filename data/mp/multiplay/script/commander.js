@@ -23,13 +23,13 @@ function updateBoost()
 	});
 	units.forEach(function (unit){
 		unit =  getObject(unit.type, unit.player, unit.id);
-		setDroidExperience(unit, Math.round(unit.experience+BOOST));
+		setDroidExperience(unit, Math.round(unit.experience + BOOST));
 //		debug ("boost", unit.id);
 	});
 	unitsOld.forEach(function (unit){
 		unit =  getObject(unit.type, unit.player, unit.id);
 		if (unit ===  null){return;}
-		setDroidExperience(unit, Math.round(unit.experience-BOOST));
+		setDroidExperience(unit, Math.round(unit.experience - BOOST));
 //		debug ("unboost", unit.id);
 	});
 	unitsOld = units;
@@ -37,9 +37,10 @@ function updateBoost()
 
 function comm_eventDroidBuilt(droid)
 {	
+	setDroidExperience(droid, 0);
 	if (droid.droidType == DROID_COMMAND)
 	{
 		commandTurrets.push (droid);
-		debug("push");
+//		debug("push");
 	}
 }
