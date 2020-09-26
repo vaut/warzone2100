@@ -12,35 +12,31 @@ function comm_eventGameInit()
 function updateBoost()
 {
 	var units = [];
-	commandTurrets.forEach(function (turret){
+	commandTurrets.forEach(function(turret){
 		turret = getObject(turret.type, turret.player, turret.id);
 		if (turret === null){return;}
 		var objects = enumRange(turret.x, turret.y, BOOST_RANGE);
-		units = units.concat( objects.filter(function (unit){
-			if (unit.type == DROID && unit.player == turret.player ){return true;}
+		units = units.concat(objects.filter(function (unit){
+			if (unit.type == DROID && unit.player == turret.player){return true;}
 			return false;
 		}));
-		
 	});
 	units.forEach(function (unit){
 		unit =  getObject(unit.type, unit.player, unit.id);
-		setDroidExperience(unit, Math.round(unit.experience+BOOST)); debug ("boost", unit.id);
+		setDroidExperience(unit, Math.round(unit.experience+BOOST));
+//		debug ("boost", unit.id);
 	});
 	unitsOld.forEach(function (unit){
 		unit =  getObject(unit.type, unit.player, unit.id);
 		if (unit ===  null){return;}
-		if ( unit.experience < BOOST){debug( unit.id, "lost expearance");}
-		setDroidExperience(unit, Math.round(unit.experience-BOOST));  debug ("unboost", unit.id);
-
+		setDroidExperience(unit, Math.round(unit.experience-BOOST));
+//		debug ("unboost", unit.id);
 	});
 	unitsOld = units;
-
 }
 
 function comm_eventDroidBuilt(droid)
 {	
-
-//	debug (JSON.stringify(droid, null, '\t'));
 	if (droid.droidType == DROID_COMMAND)
 	{
 		commandTurrets.push (droid);
