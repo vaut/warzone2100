@@ -433,19 +433,16 @@ function checkEndConditions()
 		var gameLost = true;
 
 		/* If teams enabled check if all team members have lost  */
-		if (alliancesType == ALLIANCES_TEAMS || alliancesType == ALLIANCES_UNSHARED)
+		for (var playnum = 0; playnum < maxPlayers; playnum++)
 		{
-			for (var playnum = 0; playnum < maxPlayers; playnum++)
+			if (playnum != selectedPlayer && allianceExistsBetween(selectedPlayer, playnum))
 			{
-				if (playnum != selectedPlayer && allianceExistsBetween(selectedPlayer, playnum))
+				factories = countStruct("A0LightFactory", playnum) + countStruct("A0CyborgFactory", playnum);
+				droids = countDroid(DROID_ANY, playnum);
+				if (droids > 0 || factories > 0)
 				{
-					factories = countStruct("A0LightFactory", playnum) + countStruct("A0CyborgFactory", playnum);
-					droids = countDroid(DROID_ANY, playnum);
-					if (droids > 0 || factories > 0)
-					{
-						gameLost = false;	// someone from our team still alive
-						break;
-					}
+					gameLost = false;	// someone from our team still alive
+					break;
 				}
 			}
 		}
