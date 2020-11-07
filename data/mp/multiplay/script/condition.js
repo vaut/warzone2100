@@ -212,6 +212,7 @@ function roomPlayability()
 
 function toSpectator(playnum, remove)
 {
+	hackNetOff();
 	setPower(0, playnum);
 	var spotter = {
 		X: mapWidth/2,
@@ -242,6 +243,7 @@ function toSpectator(playnum, remove)
 	{
 		queue("hud", 100);
 	}
+	hackNetOn();
 }
 
 function hud()
