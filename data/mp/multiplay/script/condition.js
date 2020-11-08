@@ -370,7 +370,7 @@ function activityAlert()
 	}
 	if (playerData[selectedPlayer].lastActivity + IDLETIME/2 < gameTime)
 	{
-		console(_("Passive play leads to defeat. Actions are considered: - unit building - completion of the study - construction of base structures (factories, power plants, laboratories, modules and oil rigs) - dealing damage"));
+		console(_("Playing passively will lead to defeat. Actions that are considered: - unit building - research completion - construction of base structures (factories, power plants, laboratories, modules and oil derricks) - dealing damage"));
 	//		debug (getMissionTime());
 		if (getMissionTime() > IDLETIME)
 		{
@@ -378,9 +378,9 @@ function activityAlert()
 		}
 	}
 	if (playerData[selectedPlayer].lastActivity + IDLETIME/2 > gameTime)
-		{
-			setMissionTime(-1);
-		}
+	{
+		setMissionTime(-1);
+	}
 }
 
 function co_eventDroidBuilt (droid)
