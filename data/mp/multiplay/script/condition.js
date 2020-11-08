@@ -362,6 +362,12 @@ function co_eventGameInit()
 
 function activityAlert()
 {
+	if (playerData[selectedPlayer].usertype != USERTYPE.player.fighter)
+	{
+		setMissionTime(-1);
+		removeTimer("activityAlert");
+		return;
+	}
 	if (playerData[selectedPlayer].lastActivity + IDLETIME/2 < gameTime)
 	{
 		console(_("Passive play leads to defeat. Actions are considered: - unit building - completion of the study - construction of base structures (factories, power plants, laboratories, modules and oil rigs) - dealing damage"));
