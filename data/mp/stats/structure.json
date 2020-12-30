@@ -367,6 +367,42 @@
         "type": "CORNER WALL",
         "width": 1
     },
+
+    "NEXUSCWall": {
+        "armour": 60,
+        "breadth": 1,
+        "buildPoints": 125,
+        "buildPower": 25,
+        "height": 2,
+        "hitpoints": 2800,
+        "id": "A0HardcreteMk1CWall",
+        "name": "Hardcrete Corner Wall",
+        "strength": "HARD",
+        "structureModel": [
+            "BLWALLC1.pie"
+        ],
+        "thermal": 15,
+        "type": "CORNER WALL",
+        "width": 1
+    },
+    "CollectiveCWall": {
+        "armour": 120,
+        "breadth": 1,
+        "buildPoints": 125,
+        "buildPower": 25,
+        "height": 2,
+        "hitpoints": 5600,
+        "id": "A0HardcreteMk1CWall",
+        "name": "Hardcrete Corner Wall",
+        "strength": "HARD",
+        "structureModel": [
+            "BLWALLC1.pie"
+        ],
+        "thermal": 15,
+        "type": "CORNER WALL",
+        "width": 1
+    },
+
     "A0HardcreteMk1Gate": {
         "armour": 15,
         "breadth": 1,
@@ -407,6 +443,49 @@
         "type": "WALL",
         "width": 1
     },
+
+"CollectiveWall": {
+        "armour": 120,
+        "breadth": 1,
+        "buildPoints": 125,
+        "buildPower": 25,
+        "height": 2,
+        "hitpoints": 5600,
+        "id": "A0HardcreteMk1Wall",
+        "name": "Hardcrete Wall",
+        "strength": "HARD",
+        "structureModel": [
+            "blwallh.pie",
+            "blwallc1.pie",
+            "blwallh_t.pie",
+            "blwallh_l.pie"
+        ],
+        "thermal": 15,
+        "type": "WALL",
+        "width": 1
+    },
+"NEXUSWall": {
+        "armour": 60,
+        "breadth": 1,
+        "buildPoints": 125,
+        "buildPower": 25,
+        "height": 2,
+        "hitpoints": 2800,
+        "id": "A0HardcreteMk1Wall",
+        "name": "Hardcrete Wall",
+        "strength": "HARD",
+        "structureModel": [
+            "blwallh.pie",
+            "blwallc1.pie",
+            "blwallh_t.pie",
+            "blwallh_l.pie"
+        ],
+        "thermal": 15,
+        "type": "WALL",
+        "width": 1
+    },
+
+
     "A0LasSatCommand": {
         "armour": 16,
         "breadth": 2,
