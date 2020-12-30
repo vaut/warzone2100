@@ -19,6 +19,7 @@
     },
     "player_1": {
 	"name": "Aggressor",
+	"ai": "multiplay/skirmish/Wave.js",
         "difficulty": "Hard",
         "team": 1
     }
