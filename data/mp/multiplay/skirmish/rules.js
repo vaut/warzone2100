@@ -11,6 +11,7 @@ receiveAllEvents(true);  // If doing this in eventGameInit, it seems to be too l
 include("multiplay/script/camTechEnabler.js");
 include("multiplay/script/weather.js");
 include("multiplay/script/condition.js");
+include("multiplay/script/labirint.js");
 
 var lastHitTime = 0;
 var cheatmode = false;
@@ -366,9 +367,7 @@ function eventGameInit()
 			for (var i = 0; i < structs.length; i++)
 			{
 				var s = structs[i];
-				if (playerData[playnum].difficulty != INSANE
-				    || (s.stattype != WALL && s.stattype != DEFENSE && s.stattype != GATE
-				        && s.stattype != RESOURCE_EXTRACTOR))
+				if (playerData[playnum].isAI !== true)
 				{
 					removeObject(s, false);
 				}

@@ -169,6 +169,11 @@ function canPlay(playnum)
 //	};
 //	debug(playerData[playnum].name + JSON.stringify(feature));
 
+	if (playerData[playnum].isAI===true)
+	{
+		return true;
+	}
+
 	if (!hasFactory(playnum) && !hasDroid(playnum))
 	{
 		return false;
