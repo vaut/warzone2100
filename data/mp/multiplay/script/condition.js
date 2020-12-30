@@ -18,7 +18,6 @@ const USERTYPE = {
 // - completion of the research
 // - construction of base structures (factories, power plants, laboratories, modules and oil rigs)
 // - dealing damage
-const IDLETIME = 5*60*1000; 
 
 function inOneTeam(playnum, splaynum)
 {
@@ -179,10 +178,6 @@ function canPlay(playnum)
 		return false;
 	}
 	else if (!hasFactory(playnum) && hasOnlyConstructor(playnum) && !canReachOil(playnum) )
-	{
-		return false;
-	}
-	else if (!activeGame(playnum))
 	{
 		return false;
 	}
@@ -361,59 +356,5 @@ function co_eventGameInit()
 	if (roomPlayability())
 	{
 		setTimer("checkPlayerVictoryStatus", 3000);
-		setTimer("activityAlert", 10000);
-	}
-}
-
-function activityAlert()
-{
-	if (playerData[selectedPlayer].usertype != USERTYPE.player.fighter)
-	{
-		setMissionTime(-1);
-		removeTimer("activityAlert");
-		return;
-	}
-	if (playerData[selectedPlayer].lastActivity + IDLETIME/2 < gameTime)
-	{
-		console(_("Playing passively will lead to defeat. Actions that are considered: - unit building - research completion - construction of base structures (factories, power plants, laboratories, modules and oil derricks) - dealing damage"));
-	//		debug (getMissionTime());
-		if (getMissionTime() > IDLETIME)
-		{
-			setMissionTime((playerData[selectedPlayer].lastActivity + IDLETIME - gameTime)/1000);
-		}
-	}
-	if (playerData[selectedPlayer].lastActivity + IDLETIME/2 > gameTime)
-	{
-		setMissionTime(-1);
-	}
-}
-
-function co_eventDroidBuilt (droid)
-{	
-	if (droid.player != scavengerPlayer)
-	{
-		playerData[droid.player].lastActivity = gameTime;
-	}
-}
-function co_eventStructureBuilt (structure)
-{
-	if (structure.player != scavengerPlayer)
-	{
-		playerData[structure.player].lastActivity = gameTime;
-	}
-}
-
-function co_eventResearched (research, structure, player)
-{
-	if (player != scavengerPlayer)
-	{
-		playerData[player].lastActivity = gameTime;
-	}
-}
-function co_eventAttacked (victim, attacker)
-{
-	if (attacker.player != scavengerPlayer)
-	{
-		playerData[attacker.player].lastActivity = gameTime;
 	}
 }

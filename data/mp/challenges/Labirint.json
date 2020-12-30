@@ -18,7 +18,8 @@
         "team": 0
     },
     "player_1": {
-        "difficulty": "Medium",
+	"name": "Aggressor",
+        "difficulty": "Hard",
         "team": 1
     }
 }
