@@ -5,7 +5,7 @@ const AI = 1;
 function lab_eventGameInit()
 {
 	setTimer("getResearch", 1000*60);
-	setTimer("landing", 1*60*1000);
+	setTimer("landing", 2*60*1000);
 	makeComponentAvailable("MG1Mk1", AI);
 	var spotter = {
 		X: mapWidth/2,
@@ -18,6 +18,7 @@ function lab_eventGameInit()
 
 function landing()
 {
+	if (gameTime/1000<5){return;}
 	var avalibleTemplate = [];
 	for (var key in allTemplates)
 	{
@@ -29,7 +30,7 @@ function landing()
 		}
 	}
 
-	var budget = 3*4*gameTime/1000;
+	var budget = 1*4*gameTime/1000;
 	debug ("budget",budget);
 	while (budget >0)
 	{
