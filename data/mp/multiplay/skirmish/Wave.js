@@ -4,7 +4,7 @@ var waves = [];
 function wave_eventGameInit()
 {
 	setTimer("attack", 15*1000);
-	setTimer("takeUnits", 1*1000);
+	setTimer("takeUnits", 15*1000);
 }
 
 function attack()
@@ -26,20 +26,21 @@ function attack()
 		{
 			return;
 		}
+		my = myWave[syncRandom(myWave.length)];
 		var target = targets[syncRandom(targets.length)];
-		for (var N=0; N < 10; N++)
+		for (var N=0; N < 5; N++)
 		{
 			var temp = targets[syncRandom(targets.length)];
-			if (dist(target, num.oldTarget) > dist(num.oldTarget, temp))
+			if (dist(target, my) > dist(my, temp))
 			{
 //			debug("dist", dist( temp,target));
 			target = temp;
 			}
 		}
 		var my = myWave[syncRandom(myWave.length)];
-		if ((dist(target, num.oldTarget) < ((mapWidth/10)**2 + (mapHeight/10)**2)) ||
+		if ((dist(target, my) < ((mapWidth/10)**2 + (mapHeight/10)**2)) ||
 		num.oldTarget.x == Infinity ||
-		(syncRandom(100)==1))
+		(syncRandom(10)==1))
 		{
 			debug("target group", num.group, target.name, target.x, target.y);
 			num.oldTarget = target;
@@ -66,7 +67,8 @@ function takeUnits()
 	newWave.forEach(function(o){groupAdd(waves[num].group, o);});
 
 }
+
 function dist(a,b)
 {
-return ((a.x-b.x)*(a.x-b.x)+(a.y-b.y)*(a.y-b.y));
+	return ((a.x-b.x)*(a.x-b.x)+(a.y-b.y)*(a.y-b.y));
 }
