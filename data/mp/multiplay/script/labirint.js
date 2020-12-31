@@ -29,7 +29,7 @@ function landing()
 		}
 	}
 
-	var budget = 1*4*gameTime/1000;
+	var budget = 3*4*gameTime/1000;
 	debug ("budget",budget);
 	while (budget >0)
 	{
