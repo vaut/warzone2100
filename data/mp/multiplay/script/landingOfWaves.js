@@ -59,11 +59,12 @@ function landing()
 	{
 		if (!allTemplates[key].weapons){continue;}
 		if (makeTemplate(AI, key, allTemplates[key].body, allTemplates[key].propulsion, "", allTemplates[key].weapons) !== null && //у makeTemplate изменен синтаксис в мастере. Не совместимо с 3.4.1
-		(allTemplates[key].propulsion != "wheeled01" || !componentAvailable( "HalfTrack")))
+		(allTemplates[key].propulsion != "wheeled01" ))
 		{
 			avalibleTemplate.push(key);
 		}
 	}
+	if (avalibleTemplate.length <1){avalibleTemplate.push("ViperMG01Wheels");}
 	var budget = calcBudget();
 	while (budget >0)
 	{
