@@ -3,7 +3,7 @@ debug ("run");
 var waves = [];
 function wave_eventGameInit()
 {
-	setTimer("attack", 15*1000);
+	setTimer("attack", 5*1000);
 	setTimer("takeUnits", 15*1000);
 }
 
