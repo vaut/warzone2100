@@ -26,21 +26,21 @@ function attack()
 		{
 			return;
 		}
-		my = myWave[syncRandom(myWave.length)];
-		var target = targets[syncRandom(targets.length)];
+		my = myWave[Math.floor(Math.random()*myWave.length)];
+		var target = targets[Math.floor(Math.random()*targets.length)];
 		for (var N=0; N < 5; N++)
 		{
-			var temp = targets[syncRandom(targets.length)];
+			var temp = targets[Math.floor(Math.random()*targets.length)];
 			if (dist(target, my) > dist(my, temp))
 			{
 //			debug("dist", dist( temp,target));
 			target = temp;
 			}
 		}
-		var my = myWave[syncRandom(myWave.length)];
+		var my = myWave[Math.floor(Math.random()*myWave.length)];
 		if ((dist(target, my) < ((mapWidth/10)**2 + (mapHeight/10)**2)) ||
 		num.oldTarget.x == Infinity ||
-		(syncRandom(10)==1))
+		(Math.floor(Math.random()*10)==1))
 		{
 			debug("target group", num.group, target.name, target.x, target.y);
 			num.oldTarget = target;
