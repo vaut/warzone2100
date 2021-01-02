@@ -1,4 +1,4 @@
-include ("multiplay/script/templates.js"); 
+include ("multiplay/script/templates.js");
 namespace("wa_");
 
 // Defining script variables
@@ -19,12 +19,23 @@ var waveDifficulty = (playerData[AI].difficulty+1)/2;	//general danger of waves 
 var protectTime = 5/waveDifficulty;	//time to first attack in minutes
 var PauseTime = 2/waveDifficulty;	//pause between attacks in minutes
 
+var startTime = getStartTime();
+debug (startTime);
 
+var numOil=enumFeature(ALL_PLAYERS).filter(function(e){if(e.stattype == OIL_RESOURCE)return true;return false;}).length;
+numOil += enumStruct(scavengerPlayer, RESOURCE_EXTRACTOR).length;
+for (var playnum = 0; playnum < maxPlayers; playnum++)
+{
+	numOil += enumStruct(playnum, RESOURCE_EXTRACTOR).length;
+}
+debug (numOil);
 
 function calcBudget()
 {
-	var budget = 4*gameTime/1000*waveDifficulty;
+
+	var budget = (numOil/4)*(gameTime+startTime)/1000*waveDifficulty;
 	//дописать зависимость от вышек на карте
+//	debug((numOil/4), (gameTime+startTime)/1000, waveDifficulty);
 	debug("budget", budget);
 	return budget;
 }
@@ -79,5 +90,23 @@ function landing()
 
 function getResearch()
 {
-	completeResearchOnTime(gameTime/1000, AI);
+
+	completeResearchOnTime((gameTime+startTime)/1000, AI);
+}
+
+function getStartTime()
+{
+	const cleanTech = 1;
+	const timeBaseTech = 4.5*60;		// after Power Module
+	const timeAdvancedBaseTech = 7.9*60;	// after Mortar and Repair Facility
+	const timeT2 = 17*60;
+	const timeT3 = 26*60;			// after Needle Gun and Scourge Missile
+	var startTime=1;
+	var techLevel = getMultiTechLevel();
+	if (baseType == CAMP_BASE){startTime = 1;}
+	if (baseType == CAMP_WALLS){startTime=timeAdvancedBaseTech;}
+	if (techLevel == 2){startTime=timeT2;}
+	if (techLevel == 3){startTime=timeT3;}
+	if (techLevel == 4){startTime=Infinity;}
+	return startTime;
 }
