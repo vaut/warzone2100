@@ -1,10 +1,11 @@
+/*jshint esversion: 7 */
 namespace("wave_");
 debug ("run");
 var waves = [];
 function wave_eventGameInit()
 {
-	setTimer("attack", 5*1000);
-	setTimer("takeUnits", 15*1000);
+	setTimer("attack", 30*1000);
+	setTimer("takeUnits", 5*1000);
 }
 
 function attack()
@@ -12,11 +13,9 @@ function attack()
 	var targets = [];
 	for (var playnum = 0; playnum < maxPlayers; playnum++)
 	{
-		if (playnum == me) {continue;}
-		targets = targets.concat(enumStruct(playnum), enumDroid(playnum)) ;
+		if (playnum == me || allianceExistsBetween(me, playnum)) {continue;}
+		targets = targets.concat(enumStruct(playnum), enumDroid(playnum));
 	}
-//	debug(JSON.stringify(targets));
-//	targets = targets.filter(function (p){debug(p.player, me); if (p.player == me) return false; return true;});
 	if (targets.length == 0){return;}
 //	debug(JSON.stringify(targets));
 	waves.forEach(function(num)
@@ -26,7 +25,7 @@ function attack()
 		{
 			return;
 		}
-		my = myWave[Math.floor(Math.random()*myWave.length)];
+		var my = myWave[0];
 		var target = targets[Math.floor(Math.random()*targets.length)];
 		for (var N=0; N < 5; N++)
 		{
@@ -37,7 +36,6 @@ function attack()
 			target = temp;
 			}
 		}
-		var my = myWave[Math.floor(Math.random()*myWave.length)];
 		if ((dist(target, my) < ((mapWidth/10)**2 + (mapHeight/10)**2)) ||
 		num.oldTarget.x == Infinity ||
 		(Math.floor(Math.random()*10)==1))
@@ -72,3 +70,36 @@ function dist(a,b)
 {
 	return ((a.x-b.x)*(a.x-b.x)+(a.y-b.y)*(a.y-b.y));
 }
+
+function eventDroidIdle(droid){
+	if (droid.player !== me){return;}
+	if (!droid.group){takeUnits(); debug("take"); return;}
+	var x = waves[droid.group-1].oldTarget.x;
+	var y = waves[droid.group-1].oldTarget.y;
+	if (x == Infinity)
+	{
+		waves[droid.group-1].oldTarget.x = Math.random()*mapWidth; 
+		waves[droid.group-1].oldTarget.y = Math.random()*mapHeight; 
+	}
+	if (dist(droid, waves[droid.group-1].oldTarge) < 123 ){}
+	debug ("DroidIdle", droid.group, x, y);
+	enumGroup(droid.group).forEach(function(o)
+		{
+			orderDroidLoc(o, DORDER_SCOUT, x, y);
+		});
+
+}
+
+function randTarget(group, targets)
+{
+}
+
+function nearTarget(group, targets)
+{
+}
+
+function clustering(group, targets)
+{	
+}
+
+
