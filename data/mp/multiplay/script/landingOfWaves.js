@@ -34,8 +34,6 @@ function calcBudget()
 {
 
 	var budget = (numOil/4)*(gameTime+startTime)/1000*waveDifficulty;
-	//дописать зависимость от вышек на карте
-//	debug((numOil/4), (gameTime+startTime)/1000, waveDifficulty);
 	debug("budget", budget);
 	return budget;
 }
