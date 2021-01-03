@@ -4,25 +4,35 @@ debug ("run");
 var waves = [];
 function wave_eventGameInit()
 {
-	setTimer("attack", 15*1000);
+	setTimer("attack", 1*1000);
 	setTimer("takeUnits", 5*1000);
 }
 
 function attack()
 {
-	waves.forEach(function(num)
+	let group = Math.floor(Math.random()*waves.length)+1;
+	let myWave = enumGroup(group);
+//	debug(group);
+	if (myWave.length == 0)
 	{
-		let myWave = enumGroup(num.group);
-		if (myWave.length == 0)
+		return;
+	}
+	let myTarget = waves[group].target;
+	if (!myTarget)
+	{
+		debug("fist target", group);
+		target(group);
+		return;
+	}
+	else
+	{
+//		debug (target, getObject(target.type, target.player, target.id));
+		if (!getObject(myTarget.type, myTarget.player, myTarget.id))
 		{
-			return;
+			debug("force target", group);
+			target(group);
 		}
-		let target = num.target;
-		if (!target || !getObject(target.type, target.player, target.id))
-		{
-			target(num.group);
-		}
-	});
+	}
 }
 
 function takeUnits()
@@ -39,16 +49,17 @@ function takeUnits()
 		};
 	newWave.forEach(function(o){groupAdd(waves[group].group, o);});
 	updateMainTarget(group);
+	debug ("new group", group);
 	return group;
 }
 
 function dist(a,b)
-{	
+{
 	if (!(a.x && b.x && a.y && b.y)) {return Infinity;}
 	return ((a.x-b.x)*(a.x-b.x)+(a.y-b.y)*(a.y-b.y));
 }
 function cosPhy(pos, target1, target2)
-{	
+{
 	let a = {x: target1.x-pos.x, y:target1.y-pos.y};
 	let b = {x: target2.x-pos.x, y:target2.y-pos.y};
 	return (a.x*b.x+a.y*b.y)*Math.abs(a.x*b.x+a.y*b.y)/((a.x**2+a.y**2)*(b.x**2+b.y**2));
@@ -65,7 +76,7 @@ function eventDroidIdle(droid){
 function target(group)
 {
 	updateSecondTarget(group);
-	if (waves[group].secondTarget.length == 0){updateMainTarget(group);} 
+	if (waves[group].secondTarget.length == 0){updateMainTarget(group);}
 	let secondTarget = waves[group].secondTarget.shift();
 	while (!getObject(secondTarget.type, secondTarget.player, secondTarget.id))
 	{
@@ -77,7 +88,7 @@ function target(group)
 	}
 	waves[group].target = secondTarget;
 	enumGroup(group).forEach(function(o)
-	{	
+	{
 		if (secondTarget.type == DROID){orderDroidLoc(o, DORDER_MOVE, secondTarget.x, secondTarget.y);}
 		else orderDroidObj(o, DORDER_ATTACK, secondTarget);
 //		debug ("target", secondTarget);
@@ -116,7 +127,7 @@ function updateSecondTarget(group)
 	targets = getAllTargets();
 	pos = enumGroup(group)[0];
 	targets = targets.filter(function(p){
-		if(cosPhy(pos, waves[group].mainTarget, p) < 0.96){return true;} 
+		if(cosPhy(pos, waves[group].mainTarget, p) < 0.96){return true;}
 		return false;
 	});
 	targets.sort(function (a, b) {
@@ -134,7 +145,7 @@ function clustering(group)
 	enumGroup(group).forEach(function(o)
 		{
 			orderDroidLoc(o, DORDER_SCOUT, x, y);
-		});	
+		});
 }
 
 function getAllTargets()
@@ -146,7 +157,7 @@ function getAllTargets()
 		targets = targets.concat(enumStruct(playnum), enumDroid(playnum));
 	}
 	return targets;
-	
+
 }
 
 function getMainTargets()
@@ -165,6 +176,6 @@ function getMainTargets()
 	if (targets.length == 0){targets=getAllTargets();}
 	return targets;
 }
-	
+
 
 
