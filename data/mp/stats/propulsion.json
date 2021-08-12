@@ -56,7 +56,7 @@
 		"id": "Helicopter",
 		"model": "PRLHELI1.PIE",
 		"name": "Helicopter",
-		"speed": 700,
+		"speed": 400,
 		"spinSpeed": 200,
 		"turnSpeed": 100,
 		"type": "Lift",
