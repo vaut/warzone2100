@@ -4608,6 +4608,22 @@
 			"V-Tol"
 		]
 	},
+	"R-Vehicle-Prop-Helicopter": {
+		"iconID": "IMAGE_RES_DROIDTECH",
+		"id": "R-Vehicle-Prop-Helicopter",
+		"imdName": "PRLHELI1.PIE",
+		"keyTopic": 1,
+		"msgName": "RES_V_P_V1",
+		"name": "Helicopter Propulsion",
+		"requiredResearch": [
+			"R-Struc-VTOLFactory"
+		],
+		"researchPoints": 6000,
+		"researchPower": 187,
+		"resultComponents": [
+			"Helicopter"
+		]
+	},
 	"R-Vehicle-Prop-Wheels": {
 		"iconID": "IMAGE_RES_DROIDTECH",
 		"id": "R-Vehicle-Prop-Wheels",
