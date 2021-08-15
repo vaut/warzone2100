@@ -13,7 +13,7 @@
 	},
 	"Lift": {
 		"flightName": "AIR",
-		"multiplier": 140
+		"multiplier": 40
 	},
 	"Propellor": {
 		"flightName": "GROUND",
