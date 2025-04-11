@@ -156,7 +156,7 @@ class Team
 
 	hasOnlyConstructor()
 	{
-		return this.players.some(
+		return this.players.every(
 			(player) => {return player.hasOnlyConstructor();}
 		);
 	}
