@@ -2528,7 +2528,7 @@
 		"weight": 300
 	},
 	"Laser4-PlasmaCannon": {
-		"buildPoints": 1000,
+		"buildPoints": 950,
 		"buildPower": 400,
 		"damage": 500,
 		"designable": 1,
@@ -2543,7 +2543,7 @@
 		"hitpoints": 50,
 		"id": "Laser4-PlasmaCannon",
 		"lightWorld": 1,
-		"longRange": 1280,
+		"longRange": 1216,
 		"longHit": 50,
 		"maxElevation": 90,
 		"minElevation": -60,
@@ -2643,7 +2643,7 @@
 		"buildPoints": 50,
 		"buildPower": 10,
 		"damage": 10,
-		"designable": 1,
+		"designable": 1,		
 		"effectSize": 100,
 		"facePlayer": 1,
 		"firePause": 5,
